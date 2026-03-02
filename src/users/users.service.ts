@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
@@ -31,21 +30,4 @@ export class UsersService {
     const user = this.userRepository.create(dto);
     return this.userRepository.save(user);
   }
-
-  //
-  // update(id: string, updatedUser: UpdateUserDto) {
-  //   const currentUser = this.users.find((user) => user.id === id);
-  //   if (!currentUser) {
-  //     console.error('User not found');
-  //   }
-  //   this.users.map((user) => {
-  //     if (user.id === id) {
-  //       return { ...user, ...updatedUser };
-  //     } else return user;
-  //   });
-  // }
-  //
-  // delete(id: string): void {
-  //   this.users = this.users.filter((user) => user.id !== id);
-  // }
 }

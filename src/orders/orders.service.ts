@@ -5,14 +5,11 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UsersService } from '../users/users.service';
 import { OrderItemEntity } from './entities/order_item.entity';
-import { ProductsService } from '../products/products.service';
 import { UserEntity } from '../users/entities/user.entity';
 import { ProductEntity } from '../products/entities/product.entity';
 
@@ -21,10 +18,6 @@ export class OrdersService {
   constructor(
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
-    @InjectRepository(OrderItemEntity)
-    private readonly orderItemRepository: Repository<OrderItemEntity>,
-    private userService: UsersService,
-    private productsService: ProductsService,
     private dataSource: DataSource,
   ) {}
 
@@ -105,18 +98,6 @@ export class OrdersService {
     } finally {
       await queryRunner.release();
     }
-  }
-
-  findAll() {
-    return `This action returns all orders`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
-  }
-
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
   }
 
   async remove(id: string) {
