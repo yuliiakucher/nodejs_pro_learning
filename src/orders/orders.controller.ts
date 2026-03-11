@@ -5,7 +5,7 @@ import {
   Param,
   Delete,
   Headers,
-  BadRequestException,
+  BadRequestException, Get,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -24,6 +24,11 @@ export class OrdersController {
       throw new BadRequestException('Invalid idempotency key');
     }
     return this.ordersService.create(createOrderDto, idempotencyKey);
+  }
+
+  @Get()
+  findAll() {
+    return this.ordersService.findAllREST();
   }
 
   @Delete(':id')
