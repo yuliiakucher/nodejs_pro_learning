@@ -9,6 +9,8 @@ import { UserEntity } from '../users/entities/user.entity';
 import { UsersModule } from '../users/users.module';
 import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
+import { OrderItemResolver, OrdersResolver } from './graphql/order.resolver';
+import { OrderStatusEntity } from './entities/order_status.entity';
 
 @Module({
   imports: [
@@ -17,10 +19,11 @@ import { ProductsService } from '../products/products.service';
       OrderEntity,
       OrderItemEntity,
       UserEntity,
+      OrderStatusEntity,
     ]),
     UsersModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, UsersService, ProductsService],
+  providers: [OrdersService, UsersService, ProductsService, OrdersResolver, OrderItemResolver],
 })
 export class OrdersModule {}

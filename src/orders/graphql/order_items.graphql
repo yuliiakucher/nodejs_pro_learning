@@ -1,0 +1,7 @@
+type OrderItems {
+    id: String!
+    order: Order!
+    product: Product!
+    priceAtPurchase: Float!
+    quantity: Int!
+}

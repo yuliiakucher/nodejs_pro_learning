@@ -7,6 +7,11 @@ import { ProductsModule } from './products/products.module';
 import { OrdersModule } from './orders/orders.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from '../db/datasource';
+import { GraphQLISODateTime, GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'node:path';
+import { LoadersFactory } from './orders/graphql/loaders/loader.factory';
+import { LoadersModule } from './orders/graphql/loaders/loader.module';
 
 @Module({
   imports: [
@@ -14,6 +19,25 @@ import { dataSourceOptions } from '../db/datasource';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      inject: [LoadersFactory],
+      imports: [LoadersModule],
+      useFactory: (loadersFactory: LoadersFactory) => ({
+        typePaths: ['./src/**/*.graphql'],
+        introspection: true,
+        definitions: {
+          path: join(process.cwd(), 'src/graphql.ts'),
+          outputAs: 'class',
+        },
+        resolvers: {
+          DateTime: GraphQLISODateTime,
+        },
+        context: () => ({
+          loaders: loadersFactory.createLoaders(),
+        }),
+      }),
+    }),
     UsersModule,
     ProductsModule,
     OrdersModule,

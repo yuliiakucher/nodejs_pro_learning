@@ -1,0 +1,38 @@
+scalar DateTime
+
+type Order {
+    id: String!
+    deliveryAddress: String!
+    user: User!
+    orderItems: [OrderItems]!
+    orderStatus: OrderStatus!
+    createdAt: DateTime!
+}
+
+input OrdersFilterInput {
+    status: String
+    dateFrom: String
+    dateTo: String
+}
+
+input OrdersPaginationInput {
+    limit: Int
+    offset: Int
+}
+
+type OrdersPagination {
+    limit: Int
+    offset: Int
+}
+
+type OrdersResponse {
+    nodes: [Order]
+    pageInfo: OrdersPagination
+    totalCount: Int
+}
+
+type Query {
+    order(id: String!): Order
+
+    orders(filter: OrdersFilterInput, pagination: OrdersPaginationInput): OrdersResponse
+}

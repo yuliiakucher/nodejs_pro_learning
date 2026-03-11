@@ -9,13 +9,13 @@ export class BaseEntity {
   id: string;
 
   @CreateDateColumn({
-    type: 'timestamp',
+    type: 'timestamp with time zone',
     name: 'created_at',
   })
   createdAt: string;
 
   @UpdateDateColumn({
-    type: 'timestamp',
+    type: 'timestamp with time zone',
     name: 'updated_at',
   })
   updatedAt: string;
