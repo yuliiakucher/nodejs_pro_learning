@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 import { ProductsService } from '../products/products.service';
 import { OrderItemResolver, OrdersResolver } from './graphql/order.resolver';
 import { OrderStatusEntity } from './entities/order_status.entity';
+import { RoleEntity } from '../users/entities/roles.entity';
 
 @Module({
   imports: [
@@ -20,10 +21,17 @@ import { OrderStatusEntity } from './entities/order_status.entity';
       OrderItemEntity,
       UserEntity,
       OrderStatusEntity,
+      RoleEntity,
     ]),
     UsersModule,
   ],
   controllers: [OrdersController],
-  providers: [OrdersService, UsersService, ProductsService, OrdersResolver, OrderItemResolver],
+  providers: [
+    OrdersService,
+    UsersService,
+    ProductsService,
+    OrdersResolver,
+    OrderItemResolver,
+  ],
 })
 export class OrdersModule {}

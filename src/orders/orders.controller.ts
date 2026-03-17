@@ -5,10 +5,15 @@ import {
   Param,
   Delete,
   Headers,
-  BadRequestException, Get,
+  BadRequestException,
+  Get,
+  UseGuards,
 } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('orders')
 export class OrdersController {
@@ -32,6 +37,8 @@ export class OrdersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('support')
   remove(@Param('id') id: string) {
     return this.ordersService.remove(id);
   }
