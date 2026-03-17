@@ -7,14 +7,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
-import { DataSource, MoreThanOrEqual, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItemEntity } from './entities/order_item.entity';
 import { UserEntity } from '../users/entities/user.entity';
 import { ProductEntity } from '../products/entities/product.entity';
-import { IFilters, IPagination } from './graphql/order.resolver';
-import { DateUtils } from 'typeorm/util/DateUtils';
+import { IPagination } from './graphql/order.resolver';
 import { OrderStatusEntity } from './entities/order_status.entity';
+import { OrdersFilterInputDto } from './dto/order-status-input.dto';
 
 @Injectable()
 export class OrdersService {
@@ -116,7 +116,7 @@ export class OrdersService {
     }
   }
 
-  async findAll(filters: IFilters, pagination: IPagination) {
+  async findAll(filters: OrdersFilterInputDto, pagination: IPagination) {
     const { dateFrom, dateTo, status } = filters;
 
     const queryBuilder = this.orderRepository.createQueryBuilder('order');

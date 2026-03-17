@@ -4,15 +4,24 @@ type Order {
     id: String!
     deliveryAddress: String!
     user: User!
-    orderItems: [OrderItems]!
+    orderItems: [OrderItems!]!
     orderStatus: OrderStatus!
     createdAt: DateTime!
 }
 
+enum OrderStatusInput {
+    NEW
+    PENDING_PAYMENT
+    PROCESSING
+    DELIVERED
+    CANCELLED
+    RETURNED
+}
+
 input OrdersFilterInput {
-    status: String
-    dateFrom: String
-    dateTo: String
+    status: OrderStatusInput
+    dateFrom: DateTime
+    dateTo: DateTime
 }
 
 input OrdersPaginationInput {
