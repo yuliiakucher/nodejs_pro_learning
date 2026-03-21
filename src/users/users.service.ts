@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,7 @@ import { UserEntity } from './entities/user.entity';
 import { In, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RoleEntity } from './entities/roles.entity';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -30,33 +31,46 @@ export class UsersService {
     return user;
   }
 
-  create(dto: CreateUserDto) {
-    const user = this.userRepository.create(dto);
+  async create(dto: CreateUserDto) {
+    const { password, roleIds, ...rest } = dto;
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const roles = roleIds?.length ? await this.getRolesByIds(roleIds) : [];
+
+    const user = this.userRepository.create({ ...rest, passwordHash, roles });
+
     return this.userRepository.save(user);
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    const { name, email, roleIds } = dto;
+    const { roleIds, ...rest } = dto;
 
-    const user = await this.userRepository.findOne({
-      where: {
-        id,
-      },
+    const roles = roleIds?.length ? await this.getRolesByIds(roleIds) : [];
+
+    const user = await this.userRepository.preload({
+      id,
+      ...rest,
+      ...(roles !== undefined && { roles }),
     });
+
     if (!user) {
       throw new NotFoundException('User does not exist');
     }
 
-    if (roleIds && roleIds.length > 0) {
-      const roles = await this.rolesRepository.find({
-        where: {
-          id: In(roleIds),
-        },
-      });
+    return this.userRepository.save(user);
+  }
 
-      return this.userRepository.save({ ...user, roles });
+  private async getRolesByIds(roleIds: string[]) {
+    const roles = await this.rolesRepository.find({
+      where: {
+        id: In(roleIds),
+      },
+    });
+    if (roles.length !== roleIds.length) {
+      throw new BadRequestException('Some roles not found');
     }
 
-    return this.userRepository.save({ ...user, email, name });
+    return roles;
   }
 }

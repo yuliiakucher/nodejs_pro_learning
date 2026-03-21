@@ -20,3 +20,9 @@ export class RefreshTokenPayloadDto {
   @IsNotEmpty()
   refreshToken: string;
 }
+
+export class UserAuthDto {
+  sub: string;
+  email: string;
+  roles: string[];
+}
