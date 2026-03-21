@@ -83,8 +83,6 @@ export class FileRecordService {
       ['admin', 'support'].includes(role),
     );
 
-    console.log(isPrivilegedAccess);
-
     const file = await this.fileRepository.findOne({
       where: {
         id: fileId,
