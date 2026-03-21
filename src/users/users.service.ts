@@ -46,12 +46,14 @@ export class UsersService {
   async update(id: string, dto: UpdateUserDto) {
     const { roleIds, ...rest } = dto;
 
-    const roles = roleIds?.length ? await this.getRolesByIds(roleIds) : [];
+    const roles = roleIds?.length
+      ? await this.getRolesByIds(roleIds)
+      : undefined;
 
     const user = await this.userRepository.preload({
       id,
+      roles,
       ...rest,
-      ...(roles !== undefined && { roles }),
     });
 
     if (!user) {
