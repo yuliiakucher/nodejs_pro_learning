@@ -26,7 +26,7 @@ import { FileRecordModule } from './file-record/file-record.module';
       inject: [LoadersFactory],
       imports: [LoadersModule],
       useFactory: (loadersFactory: LoadersFactory) => ({
-        typePaths: ['./src/**/*.graphql'],
+        typePaths: [join(process.cwd(), 'src/**/*.graphql')],
         introspection: true,
         definitions: {
           path: join(process.cwd(), 'src/graphql.ts'),
