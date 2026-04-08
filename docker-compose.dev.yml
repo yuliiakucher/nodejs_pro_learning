@@ -16,7 +16,8 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_PORT: ${POSTGRES_PORT}
     depends_on:
-      - migrations
+      - rabbitmq
+    #      - migrations
     networks:
       - nestjs-course
     volumes:
@@ -24,24 +25,24 @@ services:
       - /app/node_modules
     command: npm run start:dev
 
-  migrations:
-    env_file: ".env"
-    image: nest-app:migrations
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: migrations
-    depends_on:
-      - postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${POSTGRES_PORT}
-      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
-    networks:
-      - nestjs-course
-    restart: "no"
+  #  migrations:
+  #    env_file: ".env"
+  #    image: nest-app:migrations
+  #    build:
+  #      context: .
+  #      dockerfile: Dockerfile
+  #      target: migrations
+  #    depends_on:
+  #      - postgres
+  #    environment:
+  #      POSTGRES_USER: ${POSTGRES_USER}
+  #      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #      POSTGRES_HOST: ${POSTGRES_HOST}
+  #      POSTGRES_PORT: ${POSTGRES_PORT}
+  #      POSTGRES_DATABASE: ${POSTGRES_DATABASE}
+  #    networks:
+  #      - nestjs-course
+  #    restart: "no"
 
   postgres:
     env_file: ".env"
@@ -54,39 +55,52 @@ services:
       - postgres_data:/var/lib/postgresql
     networks:
       - nestjs-course
-
-  minio:
-    env_file: ".env"
-    image: minio/minio:latest
-    container_name: minio
-    restart: unless-stopped
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
-      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
-    command: server /data --console-address ":9001"
     ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_bucket:/data
+      - "5432:5432"
 
-  minio-init:
-    env_file: ".env"
-    image: minio/mc:latest
-    container_name: minio-init
-    depends_on:
-      - minio
-    restart: 'no'
-    entrypoint: >
-      /bin/sh -c "
-      until mc alias set local http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}; do
-        echo 'waiting for minio...';
-        sleep 2;
-      done;
-      mc mb --ignore-existing local/${BUCKET:-lesson9-files-private};
-      mc anonymous set none local/${BUCKET:-lesson9-files-private};
-      echo 'minio bucket is ready';
-      "
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    hostname: rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    networks:
+      - nestjs-course
+#
+#  minio:
+#    env_file: ".env"
+#    image: minio/minio:latest
+#    container_name: minio
+#    restart: unless-stopped
+#    environment:
+#      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+#      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
+#    command: server /data --console-address ":9001"
+#    ports:
+#      - "9000:9000"
+#      - "9001:9001"
+#    volumes:
+#      - minio_bucket:/data
+#
+#  minio-init:
+#    env_file: ".env"
+#    image: minio/mc:latest
+#    container_name: minio-init
+#    depends_on:
+#      - minio
+#    restart: 'no'
+#    entrypoint: >
+#      /bin/sh -c "
+#      until mc alias set local http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY}; do
+#        echo 'waiting for minio...';
+#        sleep 2;
+#      done;
+#      mc mb --ignore-existing local/${BUCKET:-lesson9-files-private};
+#      mc anonymous set none local/${BUCKET:-lesson9-files-private};
+#      echo 'minio bucket is ready';
+#      "
 
 volumes:
   postgres_data:

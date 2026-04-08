@@ -3,6 +3,7 @@ import { UserEntity } from '../../users/entities/user.entity';
 import { OrderItemEntity } from './order_item.entity';
 import { BaseEntity } from '../../common/base.entity';
 import { OrderStatusEntity } from './order_status.entity';
+import { ProcessedMessagesEntity } from '../../rabbitmq/entities/processed_messages.entity';
 
 @Entity('orders')
 export class OrderEntity extends BaseEntity {
@@ -41,4 +42,17 @@ export class OrderEntity extends BaseEntity {
   @ManyToOne(() => OrderStatusEntity, (orderStatus) => orderStatus.orders)
   @JoinColumn({ name: 'order_status_id' })
   orderStatus: OrderStatusEntity;
+
+  @Column({
+    type: 'timestamp with time zone',
+    name: 'processed_at',
+    nullable: true, // for testing purpose
+  })
+  processedAt: string;
+
+  @OneToMany(
+    () => ProcessedMessagesEntity,
+    (processedMessages) => processedMessages.order,
+  )
+  messages: ProcessedMessagesEntity[];
 }

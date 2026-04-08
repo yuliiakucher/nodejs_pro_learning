@@ -1,20 +1,27 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { OrderEntity } from './entities/order.entity';
-import { DataSource, MoreThanOrEqual, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItemEntity } from './entities/order_item.entity';
 import { UserEntity } from '../users/entities/user.entity';
 import { ProductEntity } from '../products/entities/product.entity';
 import { IFilters, IPagination } from './graphql/order.resolver';
-import { DateUtils } from 'typeorm/util/DateUtils';
 import { OrderStatusEntity } from './entities/order_status.entity';
+import { MAIN_QUEUE, RabbitmqService } from '../rabbitmq/rabbitmq.service';
+
+export interface IRabbitMqMessage {
+  messageId: string;
+  orderId: string;
+  createdAt: string;
+}
 
 @Injectable()
 export class OrdersService {
@@ -26,6 +33,7 @@ export class OrdersService {
     @InjectRepository(OrderItemEntity)
     private readonly orderItemRepository: Repository<OrderItemEntity>,
     private dataSource: DataSource,
+    @Inject() private readonly rabbitMQ: RabbitmqService,
   ) {}
 
   // decided on pessimistic locking to avoid conflicts by blocking other transactions during the transaction execution
@@ -106,6 +114,15 @@ export class OrdersService {
       }
 
       await queryRunner.commitTransaction();
+
+      const messageId = crypto.randomUUID();
+      const messageBody: IRabbitMqMessage = {
+        messageId,
+        orderId: order.id,
+        createdAt: order.createdAt,
+      };
+
+      this.rabbitMQ.sendMessage(MAIN_QUEUE, JSON.stringify(messageBody));
 
       return order;
     } catch (e) {
