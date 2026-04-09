@@ -74,17 +74,12 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
 
   sendMessage(queue: string, message: string): void {
     this.channel.sendToQueue(queue, Buffer.from(message));
-    console.log(' [x] Sent %s', message, '[queue]:', queue);
   }
 
   async receiveMessage(
     handler: (msg: ConsumeMessage, channel: Channel) => void,
   ): Promise<void> {
     let message: ConsumeMessage | null = null;
-    console.log(
-      ' [*] Waiting for messages in %s. To exit press CTRL+C',
-      MAIN_QUEUE,
-    );
 
     await this.channel.consume(
       MAIN_QUEUE,
