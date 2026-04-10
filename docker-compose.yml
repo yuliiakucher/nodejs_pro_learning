@@ -54,6 +54,17 @@ services:
     networks:
       - nestjs-course
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: unless-stopped
+    hostname: rabbitmq
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    networks:
+      - nestjs-course
+
   minio:
     env_file: ".env"
     image: minio/minio:latest
