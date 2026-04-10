@@ -30,6 +30,7 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
         console.log('Connected');
         break;
       } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         console.error('[Error while connecting:]', err.message);
         await new Promise((r) => setTimeout(r, 5000));
       }
@@ -107,7 +108,7 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  onModuleDestroy() {
-    this.connection.close();
+  async onModuleDestroy() {
+    await this.connection.close();
   }
 }

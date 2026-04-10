@@ -8,10 +8,10 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon from 'argon2';
 
-interface IJwtPayload {
-  sub: string;
-  email: string;
-}
+// interface IJwtPayload {
+//   sub: string;
+//   email: string;
+// }
 
 @Injectable()
 export class AuthService {

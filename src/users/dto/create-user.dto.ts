@@ -2,7 +2,6 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
-  IsOptional,
   IsString,
   IsUUID,
 } from 'class-validator';
