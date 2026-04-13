@@ -22,6 +22,7 @@ jobs:
       - name: Build image
         run: |
           IMAGE=ghcr.io/${{ github.repository_owner }}/nest-app:${IMAGE_TAG}
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
           docker build . -t $IMAGE --target prod-distroless
       - name: Push image
         run: |
