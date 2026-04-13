@@ -21,7 +21,28 @@ jobs:
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
       - name: Build image
         run: |
-          docker build . -t ghcr.io/${{ github.repository_owner }}/nest-app:${IMAGE_TAG} --target prod-distroless
+          IMAGE=ghcr.io/${{ github.repository_owner }}/nest-app:${IMAGE_TAG}
+          docker build . -t $IMAGE --target prod-distroless
       - name: Push image
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/nest-app:${IMAGE_TAG}
+      - name: Get digest
+        run: DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE | cut -d'@' -f2)
+             echo "DIGEST=$DIGEST" >> $GITHUB_ENV
+      - name: Create release manifest
+        run: |
+          cat <<EOF > release-manifest.json
+          {
+           "commit": "${IMAGE_TAG}",
+           "createdAt": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "services": {
+             "orders_service": {
+                "image": "${IMAGE}",
+                "digest": "${DIGEST}"
+              }
+            }
+          } 
+          EOF
+
+  
+
