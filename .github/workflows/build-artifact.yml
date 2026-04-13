@@ -29,7 +29,7 @@ jobs:
           docker push ghcr.io/${{ github.repository_owner }}/nest-app:${IMAGE_TAG}
       - name: Get digest
         run: DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE | cut -d'@' -f2)
-          echo "DIGEST=$DIGEST" >> $GITHUB_ENV
+             echo "DIGEST=$DIGEST" >> $GITHUB_ENV
       - name: Create release manifest
         run: |
           cat <<EOF > release-manifest.json
