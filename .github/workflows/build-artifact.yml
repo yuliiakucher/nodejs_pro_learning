@@ -32,11 +32,13 @@ jobs:
       - name: Build image
         run: |
           IMAGE=741773097593.dkr.ecr.eu-north-1.amazonaws.com/nest-app:${IMAGE_TAG}
+          IMAGE_STAGE=741773097593.dkr.ecr.eu-north-1.amazonaws.com/nest-app:stage
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-          docker build . -t $IMAGE --target prod-distroless
+          docker build . -t $IMAGE -t ${IMAGE_STAGE} --target prod-distroless
       - name: Push image
         run: |
           docker push $IMAGE
+          docker push $IMAGE_STAGE
       - name: Get digest
         run: |
           DIGEST=$(docker inspect --format='{{index .RepoDigests 0}}' $IMAGE | cut -d'@' -f2)
