@@ -34,6 +34,7 @@ jobs:
           IMAGE=741773097593.dkr.ecr.eu-north-1.amazonaws.com/nest-app:${IMAGE_TAG}
           IMAGE_STAGE=741773097593.dkr.ecr.eu-north-1.amazonaws.com/nest-app:stage
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          echo "IMAGE_STAGE=$IMAGE_STAGE" >> $GITHUB_ENV
           docker build . -t $IMAGE -t ${IMAGE_STAGE} --target prod-distroless
       - name: Push image
         run: |
