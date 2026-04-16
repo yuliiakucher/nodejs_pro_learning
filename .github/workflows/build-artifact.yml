@@ -14,6 +14,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -31,9 +33,6 @@ jobs:
         run: |
           IMAGE=741773097593.dkr.ecr.eu-north-1.amazonaws.com/nest-app:${IMAGE_TAG}
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-          pwd
-          ls
-          echo $IMAGE
           docker build . -t $IMAGE --target prod-distroless
       - name: Push image
         run: |
