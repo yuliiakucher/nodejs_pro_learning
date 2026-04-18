@@ -22,6 +22,9 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   factories: ['dist/db/factories/**/*{.ts,.js}'],
   seeds: ['dist/db/seeds/**/*{.ts,.js}'],
   logging: ['query', 'error', 'warn'],
+  ssl: {
+    rejectUnauthorized: false, // quick fix
+  },
 };
 
 const dataSource = new DataSource(dataSourceOptions);
