@@ -64,5 +64,13 @@ jobs:
           name: release-manifest
           path: release-manifest.json
 
-  
-
+      - name: Force ECS Service Restart
+        run: |
+            aws ecs update-service \
+            --cluster uncommon-hippopotamus-ltg5a8 \
+            --service ecommerce-api-service-wkqsq7vk \
+            --force-new-deployment
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: 'eu-north-1'
