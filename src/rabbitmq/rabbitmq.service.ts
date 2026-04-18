@@ -24,7 +24,7 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     while (true) {
       try {
-        this.connection = await amqp.connect(`amqp://${this.url}`);
+        this.connection = await amqp.connect(this.url);
         this.channel = await this.connection.createChannel();
 
         console.log('Connected');
