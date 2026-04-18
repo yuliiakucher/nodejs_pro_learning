@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { UserEntity } from '../../users/entities/user.entity';
 import { OrderItemEntity } from './order_item.entity';
 import { BaseEntity } from '../../common/base.entity';
+import { OrderStatusEntity } from './order_status.entity';
 
 @Entity('orders')
 export class OrderEntity extends BaseEntity {
@@ -30,4 +31,14 @@ export class OrderEntity extends BaseEntity {
     unique: true,
   })
   idempotencyKey: string;
+
+  @Column({
+    type: 'uuid',
+    name: 'order_status_id',
+    nullable: true,
+  })
+  statusId: string;
+  @ManyToOne(() => OrderStatusEntity, (orderStatus) => orderStatus.orders)
+  @JoinColumn({ name: 'order_status_id' })
+  orderStatus: OrderStatusEntity;
 }

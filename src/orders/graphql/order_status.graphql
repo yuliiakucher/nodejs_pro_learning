@@ -1,0 +1,5 @@
+type OrderStatus {
+    id: String!
+    name: String!
+    orders: [Order]
+}

@@ -12,12 +12,19 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItemEntity } from './entities/order_item.entity';
 import { UserEntity } from '../users/entities/user.entity';
 import { ProductEntity } from '../products/entities/product.entity';
+import { IPagination } from './graphql/order.resolver';
+import { OrderStatusEntity } from './entities/order_status.entity';
+import { OrdersFilterInputDto } from './dto/order-status-input.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(OrderEntity)
     private readonly orderRepository: Repository<OrderEntity>,
+    @InjectRepository(OrderStatusEntity)
+    private readonly orderStatusRepository: Repository<OrderStatusEntity>,
+    @InjectRepository(OrderItemEntity)
+    private readonly orderItemRepository: Repository<OrderItemEntity>,
     private dataSource: DataSource,
   ) {}
 
@@ -48,10 +55,19 @@ export class OrdersService {
         throw new NotFoundException('User not found');
       }
 
+      const statusNew = await queryRunner.manager.findOne(OrderStatusEntity, {
+        where: { name: 'NEW' },
+      });
+
+      if (!statusNew) {
+        throw new NotFoundException('Status not found');
+      }
+
       const order = queryRunner.manager.create(OrderEntity, {
         user,
         deliveryAddress,
         idempotencyKey,
+        orderStatus: statusNew,
       });
 
       await queryRunner.manager.save(OrderEntity, order);
@@ -100,7 +116,81 @@ export class OrdersService {
     }
   }
 
+  async findAll(filters: OrdersFilterInputDto, pagination: IPagination) {
+    const { dateFrom, dateTo, status } = filters;
+
+    const queryBuilder = this.orderRepository.createQueryBuilder('order');
+    // .leftJoinAndSelect('order.orderStatus', 'orderStatus')
+    // .leftJoinAndSelect('order.orderItems', 'orderItems')
+    // .leftJoinAndSelect('orderItems.product', 'product');
+
+    if (filters.status) {
+      const orderStatus = await this.orderStatusRepository.findOne({
+        where: {
+          name: status,
+        },
+      });
+      queryBuilder.where('order.orderStatus = :orderStatus', {
+        orderStatus: orderStatus?.id,
+      });
+    }
+
+    if (dateFrom) {
+      queryBuilder.andWhere('order.createdAt >= :dateFrom', {
+        dateFrom,
+      });
+    }
+
+    if (dateTo) {
+      queryBuilder.andWhere('order.createdAt <= :dateTo', {
+        dateTo,
+      });
+    }
+
+    queryBuilder.skip(pagination.offset).take(pagination.limit);
+
+    const nodes = await queryBuilder.getMany();
+    const totalCount = await queryBuilder.getCount();
+
+    return {
+      nodes,
+      pageInfo: { offset: pagination.offset, limit: pagination.limit },
+      totalCount,
+    };
+  }
+
+  async findAllREST() {
+    return await this.orderRepository.find({
+      relations: ['user', 'orderItems', 'orderStatus'],
+    });
+  }
+
+  async findOne(id: string) {
+    const order = await this.orderRepository.findOne({
+      where: { id },
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    return order;
+  }
+
   async remove(id: string) {
     return await this.orderRepository.delete(id);
+  }
+
+  async findOneStatus(id: string) {
+    const status = await this.orderStatusRepository.findOne({ where: { id } });
+    if (!status) {
+      throw new NotFoundException('Order status not found');
+    }
+    return status;
+  }
+
+  async findOrderItemById(id: string) {
+    const orderItems = await this.orderItemRepository.find({
+      where: { orderId: id },
+    });
+    return orderItems;
   }
 }
