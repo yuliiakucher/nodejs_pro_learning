@@ -9,17 +9,12 @@ import {
 import { OrdersService } from '../orders.service';
 import { OrderStatusEntity } from '../entities/order_status.entity';
 import { OrderEntity } from '../entities/order.entity';
-import { Order, OrderItems } from '../../graphql';
+import { Order, OrderItems, OrdersResponse } from '../../graphql';
 import { OrderItemEntity } from '../entities/order_item.entity';
 import { ProductEntity } from '../../products/entities/product.entity';
 import { ProductsService } from '../../products/products.service';
 import { type GraphQLContext } from './loaders/loaders.types';
-
-export interface IFilters {
-  status?: string;
-  dateFrom?: string;
-  dateTo?: string;
-}
+import { OrdersFilterInputDto } from '../dto/order-status-input.dto';
 
 export interface IPagination {
   limit: number;
@@ -37,9 +32,9 @@ export class OrdersResolver {
 
   @Query(() => [OrderEntity])
   async orders(
-    @Args('filter') filter: IFilters,
+    @Args('filter') filter: OrdersFilterInputDto,
     @Args('pagination') pagination: IPagination,
-  ) {
+  ): Promise<OrdersResponse> {
     return await this.ordersService.findAll(filter, pagination);
   }
 
