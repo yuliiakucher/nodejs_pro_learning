@@ -6,6 +6,7 @@ import { UserEntity } from './entities/user.entity';
 import { OrderEntity } from '../orders/entities/order.entity';
 import { OrderItemEntity } from '../orders/entities/order_item.entity';
 import { ProductEntity } from '../products/entities/product.entity';
+import { RoleEntity } from './entities/roles.entity';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ProductEntity } from '../products/entities/product.entity';
       OrderEntity,
       OrderItemEntity,
       ProductEntity,
+      RoleEntity,
     ]),
   ],
   controllers: [UsersController],
