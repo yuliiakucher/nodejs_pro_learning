@@ -13,6 +13,7 @@ import { join } from 'node:path';
 import { LoadersFactory } from './orders/graphql/loaders/loader.factory';
 import { LoadersModule } from './orders/graphql/loaders/loader.module';
 import { AuthModule } from './auth/auth.module';
+import { FileRecordModule } from './file-record/file-record.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { AuthModule } from './auth/auth.module';
     ProductsModule,
     OrdersModule,
     AuthModule,
+    FileRecordModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -2,6 +2,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { OrderEntity } from '../../orders/entities/order.entity';
 import { BaseEntity } from '../../common/base.entity';
 import { RoleEntity } from './roles.entity';
+import { FileRecordEntity } from '../../file-record/entities/fileRecord.entity';
 
 @Entity('users')
 export class UserEntity extends BaseEntity {
@@ -38,4 +39,13 @@ export class UserEntity extends BaseEntity {
   @ManyToMany(() => RoleEntity, (role) => role.users)
   @JoinTable()
   roles: RoleEntity[];
+
+  @OneToMany(() => FileRecordEntity, (fileRecord) => fileRecord.user)
+  files: FileRecordEntity[];
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  avatar: string;
 }
