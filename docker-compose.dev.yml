@@ -6,8 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: prod-distroless
-    image: nest-app:prod-distroless
+      target: deps
+    image: nest-app:deps
     ports:
       - "8080:8080"
     environment:
@@ -19,7 +19,10 @@ services:
       - migrations
     networks:
       - nestjs-course
-
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
 
   migrations:
     env_file: ".env"
@@ -47,8 +50,6 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     networks:

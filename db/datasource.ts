@@ -2,8 +2,8 @@ import { config } from 'dotenv';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
-import { runSeeder } from 'typeorm-extension';
-import MainSeeder from './seeds';
+// import { runSeeder } from 'typeorm-extension';
+// import MainSeeder from './seeds';
 
 config();
 
@@ -21,7 +21,7 @@ export const dataSourceOptions: DataSourceOptions & SeederOptions = {
   migrationsTableName: 'migrations',
   factories: ['dist/db/factories/**/*{.ts,.js}'],
   seeds: ['dist/db/seeds/**/*{.ts,.js}'],
-  logging: ['query', 'error', 'warn']
+  logging: ['query', 'error', 'warn'],
 };
 
 const dataSource = new DataSource(dataSourceOptions);
