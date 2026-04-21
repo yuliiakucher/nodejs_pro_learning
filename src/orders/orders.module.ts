@@ -12,6 +12,10 @@ import { ProductsService } from '../products/products.service';
 import { OrderItemResolver, OrdersResolver } from './graphql/order.resolver';
 import { OrderStatusEntity } from './entities/order_status.entity';
 import { RoleEntity } from '../users/entities/roles.entity';
+import { RabbitmqService } from '../rabbitmq/rabbitmq.service';
+import { RabbitmqModule } from '../rabbitmq/rabbitmq.module';
+import { Consumer } from './consumer';
+import { ProcessedMessagesEntity } from '../rabbitmq/entities/processed_messages.entity';
 
 @Module({
   imports: [
@@ -22,8 +26,10 @@ import { RoleEntity } from '../users/entities/roles.entity';
       UserEntity,
       OrderStatusEntity,
       RoleEntity,
+      ProcessedMessagesEntity,
     ]),
     UsersModule,
+    RabbitmqModule,
   ],
   controllers: [OrdersController],
   providers: [
@@ -32,6 +38,8 @@ import { RoleEntity } from '../users/entities/roles.entity';
     ProductsService,
     OrdersResolver,
     OrderItemResolver,
+    RabbitmqService,
+    Consumer,
   ],
 })
 export class OrdersModule {}

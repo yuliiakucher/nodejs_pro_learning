@@ -14,6 +14,7 @@ import { LoadersFactory } from './orders/graphql/loaders/loader.factory';
 import { LoadersModule } from './orders/graphql/loaders/loader.module';
 import { AuthModule } from './auth/auth.module';
 import { FileRecordModule } from './file-record/file-record.module';
+import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { FileRecordModule } from './file-record/file-record.module';
     OrdersModule,
     AuthModule,
     FileRecordModule,
+    RabbitmqModule,
   ],
   controllers: [AppController],
   providers: [AppService],
