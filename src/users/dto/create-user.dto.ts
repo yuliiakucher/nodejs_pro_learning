@@ -2,9 +2,9 @@ import {
   IsArray,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsUUID,
-  ValidateNested,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -18,4 +18,8 @@ export class CreateUserDto {
   @IsArray()
   @IsUUID('4', { each: true })
   roleIds: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }
