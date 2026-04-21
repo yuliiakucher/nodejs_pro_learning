@@ -8,10 +8,19 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export enum OrderStatusInput {
+    NEW = "NEW",
+    PENDING_PAYMENT = "PENDING_PAYMENT",
+    PROCESSING = "PROCESSING",
+    DELIVERED = "DELIVERED",
+    CANCELLED = "CANCELLED",
+    RETURNED = "RETURNED"
+}
+
 export class OrdersFilterInput {
-    status?: Nullable<string>;
-    dateFrom?: Nullable<string>;
-    dateTo?: Nullable<string>;
+    status?: Nullable<OrderStatusInput>;
+    dateFrom?: Nullable<DateTime>;
+    dateTo?: Nullable<DateTime>;
 }
 
 export class OrdersPaginationInput {
@@ -23,7 +32,7 @@ export class Order {
     id: string;
     deliveryAddress: string;
     user: User;
-    orderItems: Nullable<OrderItems>[];
+    orderItems: OrderItems[];
     orderStatus: OrderStatus;
     createdAt: DateTime;
 }

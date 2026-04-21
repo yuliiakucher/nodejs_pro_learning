@@ -16,6 +16,7 @@ import { ProductEntity } from '../products/entities/product.entity';
 import { IFilters, IPagination } from './graphql/order.resolver';
 import { OrderStatusEntity } from './entities/order_status.entity';
 import { MAIN_QUEUE, RabbitmqService } from '../rabbitmq/rabbitmq.service';
+import { OrdersFilterInputDto } from './dto/order-status-input.dto';
 
 export interface IRabbitMqMessage {
   messageId: string;
@@ -133,7 +134,7 @@ export class OrdersService {
     }
   }
 
-  async findAll(filters: IFilters, pagination: IPagination) {
+  async findAll(filters: OrdersFilterInputDto, pagination: IPagination) {
     const { dateFrom, dateTo, status } = filters;
 
     const queryBuilder = this.orderRepository.createQueryBuilder('order');
