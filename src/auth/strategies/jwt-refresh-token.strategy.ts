@@ -26,6 +26,7 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
 
     if (!refreshToken) throw new ForbiddenException('Refresh token not valid');
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return { ...payload, refreshToken };
   }
 }

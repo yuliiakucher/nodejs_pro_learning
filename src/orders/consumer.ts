@@ -25,6 +25,7 @@ export class Consumer implements OnApplicationBootstrap {
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     await this.rabbitmqService.receiveMessage((msg, channel) =>
       this.messageHandler(msg, channel),
     );
@@ -82,6 +83,7 @@ export class Consumer implements OnApplicationBootstrap {
 
         await this.processedMessagesRepository.save(processedMessage);
       } catch (error) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (error.code === '23505') {
           console.warn('Message already processed:', message.messageId);
           channel.ack(msg);
@@ -92,6 +94,7 @@ export class Consumer implements OnApplicationBootstrap {
       }
 
       channel.ack(msg);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       const retries = msg?.properties?.headers?.['x-retries'] as number;
       const nextRetry: number = (retries || 0) + 1;

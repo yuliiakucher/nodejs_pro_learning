@@ -10,9 +10,14 @@ export class MinioService {
     this.client = new Client({
       endPoint: configService.getOrThrow('MINIO_HOST'),
       port: configService.getOrThrow('MINIO_PORT'),
-      accessKey: configService.getOrThrow('MINIO_ACCESS_KEY'),
-      secretKey: configService.getOrThrow('MINIO_SECRET_KEY'),
       useSSL: false,
+      // 👇 only include if they exist
+      ...(this.configService.get('MINIO_ACCESS_KEY') && {
+        accessKey: this.configService.get('MINIO_ACCESS_KEY'),
+      }),
+      ...(this.configService.get('MINIO_SECRET_KEY') && {
+        secretKey: this.configService.get('MINIO_SECRET_KEY'),
+      }),
     });
   }
 

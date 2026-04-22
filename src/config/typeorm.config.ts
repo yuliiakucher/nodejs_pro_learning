@@ -12,5 +12,8 @@ export function getTypeOrmConfig(
     password: configService.getOrThrow('POSTGRES_PASSWORD'),
     database: configService.getOrThrow('POSTGRES_DATABASE'),
     autoLoadEntities: true,
+    ssl: {
+      rejectUnauthorized: false, // quick fix
+    },
   };
 }

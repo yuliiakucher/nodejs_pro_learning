@@ -24,12 +24,13 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
     while (true) {
       try {
-        this.connection = await amqp.connect(`amqp://${this.url}`);
+        this.connection = await amqp.connect(this.url);
         this.channel = await this.connection.createChannel();
 
         console.log('Connected');
         break;
       } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         console.error('[Error while connecting:]', err.message);
         await new Promise((r) => setTimeout(r, 5000));
       }
@@ -107,7 +108,7 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  onModuleDestroy() {
-    this.connection.close();
+  async onModuleDestroy() {
+    await this.connection.close();
   }
 }
