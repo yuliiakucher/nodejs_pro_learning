@@ -16,6 +16,7 @@ import { RabbitmqService } from '../rabbitmq/rabbitmq.service';
 import { RabbitmqModule } from '../rabbitmq/rabbitmq.module';
 import { Consumer } from './consumer';
 import { ProcessedMessagesEntity } from '../rabbitmq/entities/processed_messages.entity';
+import { PaymentsModule } from '../payments/payments.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProcessedMessagesEntity } from '../rabbitmq/entities/processed_messages
     ]),
     UsersModule,
     RabbitmqModule,
+    PaymentsModule,
   ],
   controllers: [OrdersController],
   providers: [

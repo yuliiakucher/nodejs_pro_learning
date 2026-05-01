@@ -15,6 +15,7 @@ import { LoadersModule } from './orders/graphql/loaders/loader.module';
 import { AuthModule } from './auth/auth.module';
 import { FileRecordModule } from './file-record/file-record.module';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
       inject: [LoadersFactory],
       imports: [LoadersModule],
       useFactory: (loadersFactory: LoadersFactory) => ({
-        typePaths: [join(process.cwd(), 'src/**/*.graphql')],
+        typePaths: [join(process.cwd(), 'main-service/src/**/*.graphql')],
         introspection: true,
         definitions: {
           path: join(process.cwd(), 'src/graphql.ts'),
@@ -47,6 +48,7 @@ import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
     AuthModule,
     FileRecordModule,
     RabbitmqModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

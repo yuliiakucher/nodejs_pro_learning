@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package payments;
+
+service Payments {
+  rpc Authorize (CreatePaymentRequest) returns (CreatePaymentResponse);
+  rpc GetPaymentStatus (GetPaymentStatusRequest) returns (GetPaymentStatusResponse);
+
+}
+
+message CreatePaymentRequest {
+  string orderId = 1;
+  float price = 2;
+  string currency = 3;
+}
+
+message CreatePaymentResponse {
+  string paymentId = 1;
+  string status = 2;
+}
+
+message GetPaymentStatusRequest {
+  string paymentId = 1;
+}
+
+message GetPaymentStatusResponse {
+  string paymentId = 1;
+  string status = 2;
+}

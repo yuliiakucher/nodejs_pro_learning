@@ -17,11 +17,13 @@ import { IPagination } from './graphql/order.resolver';
 import { OrderStatusEntity } from './entities/order_status.entity';
 import { MAIN_QUEUE, RabbitmqService } from '../rabbitmq/rabbitmq.service';
 import { OrdersFilterInputDto } from './dto/order-status-input.dto';
+import { PaymentsService } from '../payments/payments.service';
 
 export interface IRabbitMqMessage {
   messageId: string;
   orderId: string;
   createdAt: string;
+  paymentStatus: string;
 }
 
 @Injectable()
@@ -35,6 +37,7 @@ export class OrdersService {
     private readonly orderItemRepository: Repository<OrderItemEntity>,
     private dataSource: DataSource,
     @Inject() private readonly rabbitMQ: RabbitmqService,
+    @Inject() private readonly paymentsService: PaymentsService,
   ) {}
 
   // decided on pessimistic locking to avoid conflicts by blocking other transactions during the transaction execution
@@ -116,14 +119,32 @@ export class OrdersService {
 
       await queryRunner.commitTransaction();
 
-      const messageId = crypto.randomUUID();
-      const messageBody: IRabbitMqMessage = {
-        messageId,
-        orderId: order.id,
-        createdAt: order.createdAt,
-      };
-
-      this.rabbitMQ.sendMessage(MAIN_QUEUE, JSON.stringify(messageBody));
+      // fire and forget
+      this.paymentsService
+        .authorize({
+          orderId: order.id,
+          price: 19999,
+          currency: 'USD',
+        })
+        .then((payment) => {
+          const messageBody: IRabbitMqMessage = {
+            messageId: crypto.randomUUID(),
+            orderId: order.id,
+            createdAt: order.createdAt,
+            paymentStatus: payment.status,
+          };
+          this.rabbitMQ.sendMessage(MAIN_QUEUE, JSON.stringify(messageBody));
+        })
+        .catch((err) => {
+          console.error(`Payment failed for order ${order.id}:`, err.message);
+          const messageBody: IRabbitMqMessage = {
+            messageId: crypto.randomUUID(),
+            orderId: order.id,
+            createdAt: order.createdAt,
+            paymentStatus: 'PAYMENT_FAILED',
+          };
+          this.rabbitMQ.sendMessage(MAIN_QUEUE, JSON.stringify(messageBody));
+        });
 
       return order;
     } catch (e) {

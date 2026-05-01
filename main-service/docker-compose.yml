@@ -2,9 +2,9 @@ version: '3.9'
 
 services:
   app:
-    env_file: ".env"
+    env_file: "../.env"
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
       target: prod-distroless
     image: nest-app:prod-distroless
@@ -22,10 +22,10 @@ services:
 
 
   migrations:
-    env_file: ".env"
+    env_file: "../.env"
     image: nest-app:migrations
     build:
-      context: .
+      context: ..
       dockerfile: Dockerfile
       target: migrations
     depends_on:
@@ -41,7 +41,7 @@ services:
     restart: "no"
 
   postgres:
-    env_file: ".env"
+    env_file: "../.env"
     container_name: postgres
     image: postgres:latest
     environment:
@@ -66,7 +66,7 @@ services:
       - nestjs-course
 
   minio:
-    env_file: ".env"
+    env_file: "../.env"
     image: minio/minio:latest
     container_name: minio
     restart: unless-stopped
@@ -81,7 +81,7 @@ services:
       - minio_bucket:/data
 
   minio-init:
-    env_file: ".env"
+    env_file: "../.env"
     image: minio/mc:latest
     container_name: minio-init
     depends_on:
