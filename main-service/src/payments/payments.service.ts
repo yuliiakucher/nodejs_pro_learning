@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import type { ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom, Observable, retry, timeout, timer } from 'rxjs';
+import { firstValueFrom, Observable, timeout } from 'rxjs';
 import { ConfigService } from '@nestjs/config';
 
 export interface AuthorizeRequest {

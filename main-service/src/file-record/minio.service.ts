@@ -7,11 +7,12 @@ export class MinioService {
   private client: Client;
 
   constructor(private readonly configService: ConfigService) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.client = new Client({
       endPoint: configService.getOrThrow('MINIO_HOST'),
       port: configService.getOrThrow('MINIO_PORT'),
       useSSL: false,
-      // 👇 only include if they exist
+      // only include if they exist
       ...(this.configService.get('MINIO_ACCESS_KEY') && {
         accessKey: this.configService.get('MINIO_ACCESS_KEY'),
       }),

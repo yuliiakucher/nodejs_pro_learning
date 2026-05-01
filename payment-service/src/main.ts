@@ -19,4 +19,4 @@ async function bootstrap() {
   console.log('Payment gRPC service running on port 50051');
 }
 
-bootstrap();
+void bootstrap();

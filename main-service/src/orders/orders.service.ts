@@ -135,7 +135,7 @@ export class OrdersService {
           };
           this.rabbitMQ.sendMessage(MAIN_QUEUE, JSON.stringify(messageBody));
         })
-        .catch((err) => {
+        .catch((err: Error) => {
           console.error(`Payment failed for order ${order.id}:`, err.message);
           const messageBody: IRabbitMqMessage = {
             messageId: crypto.randomUUID(),
