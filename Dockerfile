@@ -6,7 +6,7 @@ COPY --chown=node:node package*.json ./
 
 RUN npm ci
 
-COPY --chown=node:node .. .
+COPY --chown=node:node . .
 
 FROM deps as build
 
@@ -15,7 +15,7 @@ RUN npm run build
 # Use find to grab all your graphql files and move them to a single 'staging' folder
 RUN mkdir -p /app/graphql && \
     chown node:node /app/graphql && \
-    find src -name "*.graphql" -exec cp --parents {} /app/graphql \;
+    find main-service/src -name "*.graphql" -exec cp --parents {} /app/graphql \;
 
 RUN rm -rf node_modules
 
@@ -36,7 +36,7 @@ COPY --chown=node:node --from=build /app/graphql ./src/graphql
 # non-root user
 USER node
 
-CMD ["node", "dist/src/main"]
+CMD ["node", "dist/main-service/src/main"]
 
 FROM gcr.io/distroless/nodejs22-debian13:nonroot as prod-distroless
 
@@ -48,7 +48,7 @@ COPY --chown=65532:65532 --from=build  /app/node_modules ./node_modules
 
 COPY --chown=65532:65532 --from=build /app/graphql ./src/graphql
 
-CMD ["dist/src/main.js"]
+CMD ["dist/main-service/src/main.js"]
 
 FROM build as migrations
 

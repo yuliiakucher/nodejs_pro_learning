@@ -2,9 +2,9 @@ version: '3.9'
 
 services:
   app:
-    env_file: "../.env"
+    env_file: ".env"
     build:
-      context: ..
+      context: .
       dockerfile: Dockerfile
       target: deps
     image: nest-app:deps
@@ -45,7 +45,7 @@ services:
   #    restart: "no"
 
   postgres:
-    env_file: "../.env"
+    env_file: ".env"
     container_name: postgres
     image: postgres:latest
     environment:
