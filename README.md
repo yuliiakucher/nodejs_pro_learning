@@ -13,15 +13,9 @@ Order flow: `POST /orders` → gRPC call to payment-service → result published
 
 ## Running locally
 
-Start Postgres and RabbitMQ:
+Start with dev docker colpose:
 ```bash
-docker compose -f docker-compose.dev.yml up postgres rabbitmq -d
-```
-
-Start both services (in separate terminals):
-```bash
-npm run start:dev           # main service on :8080
-npm run start:payment:dev   # payment gRPC service on :50051
+docker compose -f docker-compose.dev.yml up
 ```
 
 Copy `.env.example` to `.env` and fill in values before starting.
@@ -124,7 +118,6 @@ docker compose up
 
 - Idempotent order creation (via `x-idempotency-key` header)
 - Pessimistic locking on product stock during order transaction
-- gRPC timeout (5s) — uncomment delay in `payment-service/src/payments/payments.service.ts:22` to test
 - RabbitMQ retry queue (3 retries, 5s delay) + dead-letter queue
 - Exactly-once message processing via `processed_messages` dedup table
 
