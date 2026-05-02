@@ -55,3 +55,26 @@ FROM build as migrations
 WORKDIR /app
 
 CMD ["node_modules/.bin/typeorm", "migration:run", "-d", "dist/db/datasource.js"]
+
+FROM deps as payment-build
+
+RUN npx tsc -p payment-service/tsconfig.build.json
+
+RUN rm -rf node_modules
+
+RUN npm ci --omit=dev
+
+FROM node:24-alpine as payment-prod
+
+ENV NODE_ENV=production
+
+WORKDIR /app
+
+COPY --chown=node:node --from=payment-build /app/payment-service/dist ./dist
+COPY --chown=node:node --from=payment-build /app/package.json ./
+COPY --chown=node:node --from=payment-build /app/node_modules ./node_modules
+COPY --chown=node:node --from=payment-build /app/proto ./proto
+
+USER node
+
+CMD ["node", "dist/payment-service/src/main"]

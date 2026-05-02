@@ -1,6 +1,6 @@
 1. running locally  
 make sure postgres and rabbitmq running in docker:  
-   ```docker compose -f main-service/docker-compose.dev.yml up postgres rabbitmq -d```  
+   ```docker compose -f docker-compose.dev.yml up postgres rabbitmq -d```  
 main (orders) service starting with  
 ```npm run start:dev```  
 payment service  
