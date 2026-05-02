@@ -3,19 +3,23 @@ import { PaymentsService } from './payments.service';
 import { PaymentsController } from './payments.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { join } from 'node:path';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'PAYMENTS_PACKAGE',
-        transport: Transport.GRPC,
-        options: {
-          package: 'payments',
-          protoPath: join(process.cwd(), 'proto/payments.proto'),
-          url: 'localhost:50051',
-        },
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'payments',
+            protoPath: join(process.cwd(), 'proto/payments.proto'),
+            url: `${configService.getOrThrow<string>('PAYMENTS_GRPC_URL')}:${configService.getOrThrow<string>('PAYMENTS_GRPC_PORT')}`,
+          },
+        }),
       },
     ]),
     ConfigModule,

@@ -17,6 +17,18 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT}
     depends_on:
       - migrations
+      - payment-service
+    networks:
+      - nestjs-course
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: payment-prod
+    image: nest-app:payment-prod
+    ports:
+      - "50051:50051"
     networks:
       - nestjs-course
 

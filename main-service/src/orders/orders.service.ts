@@ -84,6 +84,8 @@ export class OrdersService {
 
       await queryRunner.manager.save(OrderEntity, order);
 
+      let totalPrice = 0;
+
       for (const item of cartItems) {
         const product = await queryRunner.manager
           .createQueryBuilder(ProductEntity, 'product')
@@ -115,6 +117,8 @@ export class OrdersService {
         });
 
         await queryRunner.manager.save(OrderItemEntity, orderItem);
+
+        totalPrice += product.price * item.quantity;
       }
 
       await queryRunner.commitTransaction();
@@ -123,7 +127,7 @@ export class OrdersService {
       this.paymentsService
         .authorize({
           orderId: order.id,
-          price: 19999,
+          price: totalPrice,
           currency: 'USD',
         })
         .then((payment) => {
@@ -149,6 +153,9 @@ export class OrdersService {
       return order;
     } catch (e) {
       await queryRunner.rollbackTransaction();
+      if (e instanceof HttpException) {
+        throw e;
+      }
       throw new InternalServerErrorException(e);
     } finally {
       await queryRunner.release();
