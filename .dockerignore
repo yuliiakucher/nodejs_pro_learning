@@ -1,6 +1,6 @@
 node_modules
-dist
+main-service/dist
 *.log
 *.md
 .git
-.env
+../.env
